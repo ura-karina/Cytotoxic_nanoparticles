@@ -20,5 +20,5 @@ Results:
 
 7) Found the parameter with the greatest impact on the prediction result (feature importance)
 
-How to install: pip install -r requirements.txt
+How to install: pip install -r requirements.txt    
 Also you need to have 3 datasets (cell_line_descriptors.csv, Cytotoxicity.csv, Incomplete_material_descriptors.xlsx)
