@@ -13,26 +13,27 @@ c = pd.read_csv('Cytotoxicity.csv')
 c.insert(loc=0, column='idx', value=range(c.shape[0]))
 c.set_index('idx')
 
-cd_columns = c.columns.tolist() + d.columns.tolist()
+cd_columns = c.columns.tolist()[2:] + d.columns.tolist()[1:]
+print(cd_columns)
 cd_merged = pd.DataFrame(columns=cd_columns)
 
-def c_plus_d():
-    for c_idx in c['idx']:
-
-        values = c.iloc[c_idx].tolist()
-        # print(values)
-        cell_type = c.loc[c_idx]['Cell type']
-        # print('cell type:', cell_type)
-        for d_idx in d['idx']:
-            cell_line = d.iloc[d_idx]['cell line']
-            if cell_line != cell_type:
-                continue
-            values += d.iloc[d_idx].tolist()
-            # print('cell line:', cell_line)
-            break
-        # print(cd_merged.columns)
-        # print('values:', values, len(values))
-        cd_merged.loc[c_idx] = values
+# def c_plus_d():
+#     for c_idx in c['idx']:
+#
+#         values = c.iloc[c_idx].tolist()[2:]
+#         # print(values)
+#         cell_type = c.loc[c_idx]['Cell type']
+#         # print('cell type:', cell_type)
+#         for d_idx in d['idx']:
+#             cell_line = d.iloc[d_idx]['cell line']
+#             if cell_line != cell_type:
+#                 continue
+#             values += d.iloc[d_idx].tolist()[1:]
+#             # print('cell line:', cell_line)
+#             break
+#         # print(cd_merged.columns)
+#         # print('values:', values, len(values))
+#         cd_merged.loc[c_idx] = values
 
 
 m_columns = ['material', 'CID', 'Canonical_smiles',	'Valance_electron', 'amw',
@@ -42,6 +43,9 @@ m_columns = ['material', 'CID', 'Canonical_smiles',	'Valance_electron', 'amw',
              'NumSpiroAtoms', 'NumBridgeheadAtoms', 'NumAtomStereoCenters', 'NumUnspecifiedAtomStereoCenters',
              'labuteASA', 'tpsa', 'CrippenClogP', 'CrippenMR', 'chi0v', 'chi1v', 'chi2v', 'chi3v', 'chi4v', 'chi0n',
              'chi1n', 'chi2n', 'chi3n', 'chi4n', 'hallKierAlpha', 'kappa1', 'kappa2', 'kappa3', 'Phi']
+
+cdm_columns = cd_columns + m_columns
+cdm_merged = pd.DataFrame(columns=cdm_columns)
 
 
 class Material:
@@ -104,16 +108,109 @@ class Material:
         self.kappa3 = Chem.GraphDescriptors.Kappa3(mol)
         self.Phi = Chem.rdMolDescriptors.CalcPhi(mol)
 
+    def get_descriptors(self):
+        return [self.brutto, self.CID, self.SMILES,
+                self.Valance_electron,
+                self.amw,
+                self.lipinskiHBA,
+                self.lipinskiHBD,
+                self.NumRotatableBonds,
+                self.HeavyAtomCount,
+                self.NumAtoms,
+                self.NumHeteroatoms,
+                self.NumAmideBonds,
+                self.FractionCSP3,
+                self.NumRings,
+                self.NumAromaticRings,
+                self.NumAliphaticRings,
+                self.NumSaturatedRings,
+                self.NumHeterocycles,
+                self.NumAromaticHeterocycles,
+                self.NumSaturatedHeterocycles,
+                self.NumAliphaticHeterocycles,
+                self.NumSpiroAtoms,
+                self.NumBridgeheadAtoms,
+                self.NumAtomStereoCenters,
+                self.NumUnspecifiedAtomStereoCenters,
+                self.labuteASA,
+                self.tpsa,
+                self.CrippenClogP,
+                self.CrippenMR,
+                self.chi0v,
+                self.chi1v,
+                self.chi2v,
+                self.chi3v,
+                self.chi4v,
+                self.chi0n,
+                self.chi1n,
+                self.chi2n,
+                self.chi3n,
+                self.chi4n,
+                self.hallKierAlpha,
+                self.kappa1,
+                self.kappa2,
+                self.kappa3,
+                self.Phi]
 
-config = ConfigParser()
 
-for material in list(set(c['material'].tolist())):
-    config.add_section(material)
-    config[material]['CID'] = ''
-    config[material]['SMILES'] = ''
+class Materials:
+    def __init__(self):
+        config = ConfigParser()
+        config.read('Material_book_descriptors.ini', encoding='utf-8')
 
-with open('book.ini', 'w') as config_file:
-    config.write(config_file)
+        self.list = []
+        for section in config.sections():
+            self.list.append(Material(section))
+
+
+material_lib = Materials()
+
+# def cd_plus_m():
+#
+#     for c_idx in c['idx']:
+#
+#         values = cd_merged.iloc[c_idx].tolist()
+#         values.pop(1)
+#         material = c.loc[c_idx]['material']
+#
+#         for m in material_lib.list:
+#             if m.brutto != material:
+#                 continue
+#             values += m.get_descriptors()
+#             break
+#
+#         cdm_merged.loc[c_idx] = values
+
+
+for c_idx in c['idx']:
+
+    values = c.iloc[c_idx].tolist()[2:]
+    cell_type = c.loc[c_idx]['Cell type']
+    for d_idx in d['idx']:
+        cell_line = d.iloc[d_idx]['cell line']
+        if cell_line != cell_type:
+            continue
+        values += d.iloc[d_idx].tolist()[1:]
+        break
+    cd_merged.loc[c_idx] = values
+
+
+for c_idx in c['idx']:
+
+    values = cd_merged.iloc[c_idx].tolist()
+    material = c.loc[c_idx]['material']
+
+    for m in material_lib.list:
+        if m.brutto != material:
+            continue
+        values += m.get_descriptors()
+        break
+
+    cdm_merged.loc[c_idx] = values
+
+cdm_merged.to_csv('cytotoxicity_merged.csv', index=False)
+
+
 
 
 
