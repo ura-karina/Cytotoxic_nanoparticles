@@ -8,7 +8,7 @@ Aim: building a model that predicts whether a nanoparticle has selective toxicit
 Results: 
 1) Obtained molecular descriptors from the rd kit library;
 
-2) Then the dataset was cleaned (duplicates, omissions were removed);
+2) Then the dataset was cleaned (duplicates were removed);
 
 3) Found correlations, removed unnecessary information. Combined possible features.
 
