@@ -6,9 +6,6 @@ def clean_script():
 
     new_df = df.drop_duplicates()
 
-    # Обработка отсутствующих значений (при этом заменются значения NaN на среднее значение)
-    # new_df = df.fillna(df.mean(''), inplace=True)
-
     new_df = df[df['viability (%)'] <= 150]
     new_df = df[df['concentration (ug/ml)'] <= 1000]
     new_df = df[df['Zeta potential (mV)'] >= -50]
@@ -16,10 +13,16 @@ def clean_script():
 
     # Проверка на согласованность данных (проверка уникальных значений)
     unique_values_cells = df['cell type'].unique()
-    # unique_values = df['test'].unique()
-    # unique_values = df[''].unique()
-    # unique_values = df['concentration (ug/ml)'].unique()
-    # unique_values = df['Cell'].unique()
+    unique_values_time = df['time (hr)'].unique()
+    unique_values_viability = df['viability (%)'].unique()
+    unique_values_conc = df['concentration (ug/ml)'].unique()
+    unique_values_diameter = df['Hydrodynamic diameter (nm)'].unique()
+
+    # Подсчитаем нули в каждой строке
+    zero_counts = new_df[new_df == 0].count(axis=1)
+
+    # Удалите строки, в которых количество нулей превышает пороговое значение
+    new_df = new_df[zero_counts >= 7]
 
     # Колонки, в которых нужно проверить пропуски и заменить их на средние значения
     columns_to_fillna = ['test', 'material', 'time (hr)', 'concentration (ug/ml)', 'viability (%)',
