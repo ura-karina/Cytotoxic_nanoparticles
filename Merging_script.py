@@ -17,23 +17,6 @@ cd_columns = c.columns.tolist()[2:] + d.columns.tolist()[1:]
 print(cd_columns)
 cd_merged = pd.DataFrame(columns=cd_columns)
 
-# def c_plus_d():
-#     for c_idx in c['idx']:
-#
-#         values = c.iloc[c_idx].tolist()[2:]
-#         # print(values)
-#         cell_type = c.loc[c_idx]['Cell type']
-#         # print('cell type:', cell_type)
-#         for d_idx in d['idx']:
-#             cell_line = d.iloc[d_idx]['cell line']
-#             if cell_line != cell_type:
-#                 continue
-#             values += d.iloc[d_idx].tolist()[1:]
-#             # print('cell line:', cell_line)
-#             break
-#         # print(cd_merged.columns)
-#         # print('values:', values, len(values))
-#         cd_merged.loc[c_idx] = values
 
 
 m_columns = ['material', 'CID', 'Canonical_smiles',	'Valance_electron', 'amw',
@@ -165,21 +148,6 @@ class Materials:
 
 material_lib = Materials()
 
-# def cd_plus_m():
-#
-#     for c_idx in c['idx']:
-#
-#         values = cd_merged.iloc[c_idx].tolist()
-#         values.pop(1)
-#         material = c.loc[c_idx]['material']
-#
-#         for m in material_lib.list:
-#             if m.brutto != material:
-#                 continue
-#             values += m.get_descriptors()
-#             break
-#
-#         cdm_merged.loc[c_idx] = values
 
 
 for c_idx in c['idx']:
@@ -208,7 +176,7 @@ for c_idx in c['idx']:
 
     cdm_merged.loc[c_idx] = values
 
-cdm_merged.to_csv('cytotoxicity_merged.csv', index=False)
+# cdm_merged.to_csv('cytotoxicity_merged.csv', index=False)
 
 
 
