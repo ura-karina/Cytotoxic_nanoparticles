@@ -6,7 +6,6 @@ import seaborn as sns
 def vizualize_script():
     df = pd.read_csv('cleaned_dataset.csv')
 
-    # Построение гистограмм
     # Выбрали колонки для визуализации на графике
     columns_to_visualize = ['concentration (ug/ml)', 'viability (%)', 'Hydrodynamic diameter (nm)',
                             'Zeta potential (mV)']
@@ -20,12 +19,15 @@ def vizualize_script():
     sns.heatmap(correlation_matrix, annot=True, linewidths=0.5)
 
     # Сделать так, чтобы 4 графика отобразились в 1
-    plt.figure(figsize=(16, 6))
-    # Создание гистограмм
+    fig, axes = plt.subplots(1, 4, figsize=(16, 6))
+
+    # Построение гистограмм для каждой колонки
     for i, column_name in enumerate(columns_to_visualize):
-        plt.subplot(1, 4, i + 1)
-        plt.xlabel(column_name)
-        plt.ylabel('Frequency')
+        ax = axes[i]
+        ax.hist(df[column_name], bins=40, color='skyblue', edgecolor='black', linewidth=0.5)
+        ax.set_title(f'Correlation histogram of {column_name}')
+        ax.set_xlabel(column_name)
+        ax.set_ylabel('Frequency')
 
     # Отобраение всех графиков
     plt.tight_layout()
