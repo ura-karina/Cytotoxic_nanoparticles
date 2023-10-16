@@ -6,7 +6,6 @@ import seaborn as sns
 def vizualize_script():
     df = pd.read_csv('cleaned_dataset.csv')
 
-    # Построение гистограмм
     # Выбрали колонки для визуализации на графике
     columns_to_visualize = ['concentration (ug/ml)', 'viability (%)', 'Hydrodynamic diameter (nm)',
                             'Zeta potential (mV)']
